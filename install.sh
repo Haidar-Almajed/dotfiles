@@ -1,9 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-script_dir=$(dirname "$(readlink -f "$0")")
+# Link Julia startup config
+mkdir -p ~/.julia/config
+ln -sf ~/workspaces/dotfiles/julia/startup.jl ~/.julia/config/startup.jl
 
-mv $HOME/.bash_profile $HOME/.bash_profile_backup
-mv $HOME/.bashrc $HOME/.bashrc_backup
-
-ln -s $script_dir/bash_profile $HOME/.bash_profile
-ln -s $script_dir/bashrc $HOME/.bashrc
+# Install common Julia packages globally
+julia --startup-file=no -e '
+import Pkg
+Pkg.add(["Revise", "DifferentialEquations", "ForwardDiff"])
+Pkg.precompile()
+'
+echo "Done! Julia packages installed."
